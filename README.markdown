@@ -13,6 +13,7 @@ When testing your code, you can either stub out services on the container, or yo
 
 The following could be in a "lib.init.rb" file or in a Rails app, "config/initializers/container.rb":
 
+```ruby
     require "dim"
     require "logger"
     require 'game'
@@ -57,19 +58,26 @@ The following could be in a "lib.init.rb" file or in a Rails app, "config/initia
     # attempts to read ENV["API_PASSWORD"], otherwise makes sure that the parent container has
     # a service named api_password registered
     ServerContainer.register_env(:api_password)
+```
 
 Using the above code elsewhere in the app, when you want a reference to the app's logger object:
 
+```ruby
     ServerContainer.logger.info("I didn't have to setup my own logger")
+```
 
 Or if you wanted access to the game instance created during setup (which already is configured with everything it needs):
 
+```ruby
     current_game = ServerContainer.game
+```
 
 If you don't like creating even the one dependency on the global constant ServerContainer, you could
 inject ServerContainer itself into your objects like so:
 
+```ruby
     World.new(GameContainer)
+```
 
 ## More Background
 
