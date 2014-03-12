@@ -45,7 +45,7 @@ describe Dim::Container do
     Then { container.some_value.should == "B" }
   end
 
-  Scenario "overriding previously-registered objects" do
+  Scenario "overriding previously-registered objects after calling" do
     Given { container.register(:some_value) { "A" } }
     Given { container.some_value == "A" }
     Given { container.override(:some_value) { "B" } }
