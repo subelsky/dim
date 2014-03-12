@@ -147,7 +147,7 @@ describe Dim::Container do
     end
 
     Scenario "overiding a service from the parent" do
-      Then "the child service overrides the parent" do
+      Then do # the child service overrides the parent
         child.gene.should == :child_gene
       end
     end
