@@ -45,6 +45,13 @@ describe Dim::Container do
     Then { container.some_value.should == "B" }
   end
 
+  Scenario "overriding previously-registered objects" do
+    Given { container.register(:some_value) { "A" } }
+    Given { container.some_value == "A" }
+    Given { container.override(:some_value) { "B" } }
+    Then { container.some_value.should == "B" }
+  end
+
   it "clears cache explicitly" do
     container.register(:app) { App.new }
     app_before = container.app
