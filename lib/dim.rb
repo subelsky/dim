@@ -58,9 +58,14 @@ module Dim
     # create the service on demand.  It is recommended that symbols be
     # used as the name of a service.
     def register(name,raise_error_on_duplicate = true,&block)
-      if @services[name] && raise_error_on_duplicate
-        fail DuplicateServiceError, "Duplicate Service Name '#{name}'"
+      if @services[name]
+        if raise_error_on_duplicate
+          fail DuplicateServiceError, "Duplicate Service Name '#{name}'"
+        else # delete the service from the cache
+          @cache.delete(name)
+        end
       end
+
       @services[name] = block
 
       self.class.send(:define_method, name) do
