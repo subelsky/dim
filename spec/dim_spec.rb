@@ -226,13 +226,30 @@ describe Dim::Container do
   end
 
   context "verifying dependencies" do
+    before { container.register(:app) { :app } }
+
+    specify { expect(container.verify_dependencies(:app)).to be_truthy }
+    specify { expect(container.verify_dependencies(:app,:frobosh)).to be_falsey }
+  end
+
+  context "check if service exists" do
     before do
       container.register(:app) { :app }
-      def container.custom_method
-      end
+      def container.custom_method; end
     end
 
-    specify { expect(container.verify_dependencies(:app,:custom_method)).to be_truthy }
-    specify { expect(container.verify_dependencies(:app,:custom_method,:frobosh)).to be_falsey }
+    specify { expect(container.service_exists?(:app)).to be_truthy }
+    specify { expect(container.service_exists?(:custom_method)).to be_truthy }
+    specify { expect(container.service_exists?(:missing_app)).to be_falsey }
+  end
+
+  context "dangerously verifying dependencies" do
+    before { container.register(:app) { :app } }
+
+    specify { expect(container.verify_dependencies!(:app)).to be_nil }
+
+    specify "raise error with list of missing services" do
+      expect{ container.verify_dependencies!(:app,:missing_app) }.to raise_error(Dim::MissingServiceError,/missing_app/)
+    end
   end
 end
