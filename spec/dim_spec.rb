@@ -1,5 +1,4 @@
-require 'dim'
-require 'rspec/given'
+require "dim"
 
 class ConsoleAppender
 end
@@ -28,192 +27,212 @@ end
 describe Dim::Container do
   let(:container) { Dim::Container.new }
 
-  Scenario "creating objects" do
-    Given { container.register(:app) { App.new } }
-    Then  { container.app.should be_a(App) }
+  context "creating objects" do
+    before { container.register(:app) { App.new } }
+    specify { expect(container.app).to be_a(App) }
   end
 
-  Scenario "returning the same object every time" do
-    Given { container.register(:app) { App.new } }
-    Given(:app)  { container.app }
-    Then { container.app.should be(app) }
+  context "returning the same object every time" do
+    let(:app) { container.app }
+    before { container.register(:app) { App.new } }
+    specify { expect(container.app).to be(app) }
   end
 
-  Scenario "overriding previously-registered objects" do
-    Given { container.register(:some_value) { "A" } }
-    Given { container.override(:some_value) { "B" } }
-    Then { container.some_value.should == "B" }
+  context "overriding previously-registered objects" do
+    before do
+      container.register(:some_value) { "A" }
+      container.override(:some_value) { "B" }
+    end
+
+    specify { expect(container.some_value).to eq("B") }
   end
 
-  it "clears cache explicitly" do
-    container.register(:app) { App.new }
-    app_before = container.app
-    container.clear_cache!
-    app_after = container.app
-    app_before.should_not == app_after
+  context "explicitly clearing cache" do
+    before { container.register(:app) { App.new } }
+
+    specify "returns new object" do
+      expect { container.clear_cache! }.to change { container.app }
+    end
   end
 
-  Scenario "contructing dependent objects" do
-    Given { container.register(:app) { |c| App.new(c.logger) } }
-    Given { container.register(:logger) { Logger.new } }
-    Given(:app) { container.app }
-    Then { app.logger.should be(container.logger) }
+  context "contructing dependent objects" do
+    let(:app) { container.app }
+
+    before do
+      container.register(:app) { |c| App.new(c.logger) }
+      container.register(:logger) { Logger.new }
+    end
+
+    specify { expect(app.logger).to be(container.logger) }
   end
 
-  Scenario "constructing dependent objects with setters" do
-    Given {
-      container.register(:app) { |c|
-        App.new.tap { |obj|
-          obj.db = c.database
-        }
-      }
-    }
-    Given { container.register(:database) { MockDB.new } }
-    Given(:app) { container.app }
+  context "constructing dependent objects with setters" do
+    let(:app) { container.app }
 
-    Then { app.db.should be(container.database) }
+    before do
+      container.register(:app) do |c|
+        App.new.tap { |obj| obj.db = c.database }
+      end
+      container.register(:database) { MockDB.new }
+    end
+
+    specify { expect(app.db).to be(container.database) }
   end
 
-  Scenario "constructing multiple dependent objects" do
-    Given {
-      container.register(:app) { |c|
-        App.new(c.logger).tap { |obj|
-          obj.db = c.database
-        }
-      }
-    }
-    Given { container.register(:logger) { Logger.new } }
-    Given { container.register(:database) { MockDB.new } }
-    Given(:app) { container.app }
-    Then { app.logger.should be(container.logger) }
-    Then { app.db.should be(container.database) }
+  context "constructing multiple dependent objects" do
+    let(:app) { container.app }
+
+    before do
+      container.register(:app) do |c|
+        App.new(c.logger).tap { |obj| obj.db = c.database }
+      end
+      container.register(:logger) { Logger.new }
+      container.register(:database) { MockDB.new }
+    end
+
+    specify { expect(app.logger).to be(container.logger) }
+    specify { expect(app.db).to be(container.database) }
   end
 
-  Scenario "constructing chains of dependencies" do
-    Given { container.register(:app) { |c| App.new(c.logger) } }
-    Given {
-      container.register(:logger) { |c|
-        Logger.new.tap { |obj|
-          obj.appender = c.logger_appender
-        }
-      }
-    }
-    Given { container.register(:logger_appender) { ConsoleAppender.new } }
-    Given { container.register(:database) { MockDB.new } }
-    Given(:logger) { container.app.logger }
+  context "constructing chains of dependencies" do
+    let(:logger) { container.app.logger }
 
-    Then { logger.appender.should be(container.logger_appender) }
+    before do
+      container.register(:app) { |c| App.new(c.logger) }
+      container.register(:logger) do |c|
+        Logger.new.tap { |obj| obj.appender = c.logger_appender }
+      end
+      container.register(:logger_appender) { ConsoleAppender.new }
+      container.register(:database) { MockDB.new }
+    end
+
+    specify { expect(logger.appender).to be(container.logger_appender) }
   end
 
-  Scenario "constructing literals" do
-    Given { container.register(:database) { |c| RealDB.new(c.username, c.userpassword) } }
-    Given { container.register(:username) { "user_name_value" } }
-    Given { container.register(:userpassword) { "password_value" } }
-    Given(:db) { container.database }
+  context "constructing literals" do
+    let(:db) { container.database }
 
-    Then { db.username.should == "user_name_value" }
-    Then { db.password.should == "password_value" }
+    before do
+      container.register(:database) { |c| RealDB.new(c.username, c.userpassword) }
+      container.register(:username) { "user_name_value" }
+      container.register(:userpassword) { "password_value" }
+    end
+
+    specify { expect(db.username).to eq("user_name_value") }
+    specify { expect(db.password).to eq("password_value") }
   end
 
   describe "Errors" do
-    Scenario "missing services" do
-      Then {
-        lambda {
-          container.undefined_service_name
-        }.should raise_error(Dim::MissingServiceError, /undefined_service_name/)
-      }
+    specify "raise missing service error" do
+      expect {
+        container.undefined_service_name
+      }.to raise_error(Dim::MissingServiceError, /undefined_service_name/)
     end
 
-    Scenario "duplicate service names" do
-      Given { container.register(:duplicate_name) { 0 } }
-      Then {
-        lambda {
+    context "duplicate service names" do
+      before { container.register(:duplicate_name) { 0 } }
+
+      specify do
+        expect {
           container.register(:duplicate_name) { 0 }
-        }.should raise_error(Dim::DuplicateServiceError, /duplicate_name/)
-      }
+        }.to raise_error(Dim::DuplicateServiceError, /duplicate_name/)
+      end
     end
   end
 
   describe "Parent/Child Container Interaction" do
-    Given(:parent) { container }
-    Given(:child) { Dim::Container.new(parent) }
+    let(:parent) { container }
+    let(:child) { Dim::Container.new(parent) }
 
-    Given { parent.register(:cell) { :parent_cell } }
-    Given { parent.register(:gene) { :parent_gene } }
-    Given { child.register(:gene) { :child_gene } }
-
-    Scenario "reusing a service from the parent" do
-      Then { child.cell.should == :parent_cell }
+    before do
+      parent.register(:cell) { :parent_cell }
+      parent.register(:gene) { :parent_gene }
+      child.register(:gene) { :child_gene }
     end
 
-    Scenario "overiding a service from the parent" do
-      Then "the child service overrides the parent" do
-        child.gene.should == :child_gene
+    context "reusing a service from the parent" do
+      specify { expect(child.cell).to eq(:parent_cell) }
+    end
+
+    context "overiding a service from the parent" do
+      specify "the child service overrides the parent" do
+        expect(child.gene).to eq(:child_gene)
       end
     end
 
-    Scenario "wrapping a service from a parent" do
-      Given { child.register(:cell) { |c| [c.parent.cell] } }
-      Then { child.cell.should == [:parent_cell] }
+    context "wrapping a service from a parent" do
+      before { child.register(:cell) { |c| [c.parent.cell] } }
+      specify { expect(child.cell).to eq([:parent_cell]) }
     end
 
-    Scenario "overriding an indirect dependency" do
-      Given { parent.register(:wrapped_cell) { |c| [c.cell] } }
-      Given { child.register(:cell) { :child_cell } }
-      Then { child.wrapped_cell.should == [:child_cell] }
+    context "overriding an indirect dependency" do
+      before do
+        parent.register(:wrapped_cell) { |c| [c.cell] }
+        child.register(:cell) { :child_cell }
+      end
+
+      specify { expect(child.wrapped_cell).to eq([:child_cell]) }
     end
 
-    Scenario "parent / child service conflicts from parents view" do
-      Then { parent.gene.should == :parent_gene }
+    context "parent / child service conflicts from parents view" do
+      specify { expect(parent.gene).to eq(:parent_gene) }
     end
 
-    Scenario "child / child service name conflicts" do
-      Given(:other_child) { Dim::Container.new(parent) }
-      Given { other_child.register(:gene) { :other_child_gene } }
+    context "child / child service name conflicts" do
+      let(:other_child) { Dim::Container.new(parent) }
 
-      Then { child.gene.should == :child_gene }
-      Then { other_child.gene.should == :other_child_gene }
+      before { other_child.register(:gene) { :other_child_gene } }
+
+      specify { expect(child.gene).to eq(:child_gene) }
+      specify { expect(other_child.gene).to eq(:other_child_gene) }
     end
   end
 
   describe "Registering env variables" do
-    Scenario "which exist in ENV" do
-      Given { ENV["SHAZ"] = "bot" }
-      Given { container.register_env(:shaz) }
-      Then  { container.shaz.should == "bot" }
+    context "which exist in ENV" do
+      before do
+        ENV["SHAZ"] = "bot"
+        container.register_env(:shaz)
+      end
+
+      specify { expect(container.shaz).to eq("bot") }
     end
 
-    Scenario "which only exist in parent" do
-      Given(:parent) { container }
-      Given { parent.register(:foo) { "bar" } }
-      Given(:child) { Dim::Container.new(parent) }
+    context "which only exist in parent" do
+      let(:parent) { container }
+      let(:child) { Dim::Container.new(parent) }
 
-      Given { ENV["FOO"] = nil }
-      Given { child.register_env(:foo) }
-      Then  { container.foo.should == "bar" }
+      before do
+        parent.register(:foo) { "bar" }
+        ENV["FOO"] = nil
+        child.register_env(:foo)
+      end
+
+      specify { expect(container.foo).to eq("bar") }
     end
 
-    Scenario "which don't exist in ENV but have a default" do
-      Given { container.register_env(:abc,"123") }
-      Then  { container.abc.should == "123" }
+    context "which don't exist in ENV but have a default" do
+      before { container.register_env(:abc,"123") }
+      specify { expect(container.abc).to eq("123") }
     end
 
-    Scenario "which don't exist in optional hash" do
-      Then {
-        lambda {
+    context "which don't exist in optional hash" do
+      specify do
+        expect {
           container.register_env(:dont_exist_in_env_or_optional_hash)
-        }.should raise_error(Dim::EnvironmentVariableNotFound)
-      }
+        }.to raise_error(Dim::EnvironmentVariableNotFound)
+      end
     end
   end
 
-  Scenario "verifying dependencies" do
-    Given { container.register(:app) { :app } }
-    Given {
+  context "verifying dependencies" do
+    before do
+      container.register(:app) { :app }
       def container.custom_method
       end
-    }
-    Then  { container.verify_dependencies(:app,:custom_method).should == true }
-    Then  { container.verify_dependencies(:app,:custom_method,:frobosh).should == false }
+    end
+
+    specify { expect(container.verify_dependencies(:app,:custom_method)).to be_truthy }
+    specify { expect(container.verify_dependencies(:app,:custom_method,:frobosh)).to be_falsey }
   end
 end
