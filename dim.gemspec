@@ -15,7 +15,6 @@ Gem::Specification.new do |s|
   s.summary = %q{Minimalistic dependency injection framework}
   s.description = %q{Minimalistic dependency injection framework keeps all of your object setup code in one place.}
   s.test_files = `git ls-files spec`.split("\n")
-  s.add_development_dependency 'rspec'
-  s.add_development_dependency 'rspec-given'
+  s.add_development_dependency "rspec"
   s.license = "MIT"
 end

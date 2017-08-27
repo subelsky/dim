@@ -77,15 +77,6 @@ module Dim
       register(name,false,&block)
     end
 
-    # Given a list of services, check to see if they are available, returning true or false.
-    def verify_dependencies(*names)
-      names.all? do |name|
-        respond_to?(name) || service_block(name)
-      end
-    rescue Dim::MissingServiceError
-      false
-    end
-
     # Lookup a service from ENV variables, or use a default if given; fall back to searching the container and its parents for a default value
     def register_env(name,default = nil)
       if value = ENV[name.to_s.upcase]
@@ -132,6 +123,27 @@ module Dim
     # signal a failure.
     def self.service_block(name)
       fail(MissingServiceError, "Unknown Service '#{name}'")
+    end
+
+    # Check to see if a custom method or service has been registered, returning true or false.
+    def service_exists?(name)
+      respond_to?(name) || service_block(name)
+    rescue Dim::MissingServiceError
+      false
+    end
+
+    # Given a list of services, check to see if they are available, returning true or false.
+    def verify_dependencies(*names)
+      names.all? { |name| service_exists?(name) }
+    end
+
+    # Given a list of services, check to see if they are available or raise an exception.
+    def verify_dependencies!(*names)
+      missing_dependencies = names.reject { |name| service_exists?(name) }
+
+      unless missing_dependencies.empty?
+        fail Dim::MissingServiceError, "Missing dependencies #{missing_dependencies.join(", ")}"
+      end
     end
   end
 end
