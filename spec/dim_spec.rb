@@ -232,8 +232,8 @@ describe Dim::Container do
   context "verifying dependencies" do
     before { container.register(:app) { :app } }
 
-    specify { expect(container.verify_dependencies(:app)).to be_true }
-    specify { expect(container.verify_dependencies(:app,:frobosh)).to be_false }
+    specify { expect(container.verify_dependencies(:app)).to be true }
+    specify { expect(container.verify_dependencies(:app,:frobosh)).to be false }
   end
 
   context "check if service exists" do
@@ -242,9 +242,9 @@ describe Dim::Container do
       def container.custom_method; end
     end
 
-    specify { expect(container.service_exists?(:app)).to be_true }
-    specify { expect(container.service_exists?(:custom_method)).to be_true }
-    specify { expect(container.service_exists?(:missing_app)).to be_false }
+    specify { expect(container.service_exists?(:app)).to be true }
+    specify { expect(container.service_exists?(:custom_method)).to be true }
+    specify { expect(container.service_exists?(:missing_app)).to be false }
   end
 
   context "dangerously verifying dependencies" do
