@@ -1,5 +1,7 @@
 # DIM: Dependency Injection - Minimal
 
+[![Build Status](https://travis-ci.org/subelsky/dim.svg?branch=master)](https://travis-ci.org/subelsky/dim)
+
 DIM is [Jim Weirich's](http://onestepback.org) minimalistic dependency injection framework, maintained in
 gem form by [Mike Subelsky](http://subelsky.com).
 
