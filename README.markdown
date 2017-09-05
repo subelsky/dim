@@ -1,6 +1,8 @@
 # DIM: Dependency Injection - Minimal
 
-[![Build Status](https://travis-ci.org/subelsky/dim.svg?branch=master)](https://travis-ci.org/subelsky/dim)
+
+[![Gem Version][version-badge]][rubygems]
+[![Build Status][travis-badge]][travis]
 
 DIM is [Jim Weirich's](http://onestepback.org) minimalistic dependency injection framework, maintained in
 gem form by [Mike Subelsky](http://subelsky.com).
@@ -89,3 +91,10 @@ the rationale for this code and how it works. Also check out [his slides](http:/
 # License
 
 Dim is available under the MIT license (see the file LICENSE for details).
+
+[version-badge]: https://img.shields.io/gem/v/dim.svg
+[rubygems]: http://rubygems.org/gems/dim
+[travis-badge]: http://img.shields.io/travis/subelsky/dim/master.svg
+[travis]: http://travis-ci.org/subelsky/dim
+[![Build Status](https://travis-ci.org/subelsky/dim.svg?branch=master)](https://travis-ci.org/subelsky/dim)
+
