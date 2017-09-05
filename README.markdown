@@ -96,5 +96,3 @@ Dim is available under the MIT license (see the file LICENSE for details).
 [rubygems]: http://rubygems.org/gems/dim
 [travis-badge]: http://img.shields.io/travis/subelsky/dim/master.svg
 [travis]: http://travis-ci.org/subelsky/dim
-[![Build Status](https://travis-ci.org/subelsky/dim.svg?branch=master)](https://travis-ci.org/subelsky/dim)
-
