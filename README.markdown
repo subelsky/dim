@@ -93,7 +93,7 @@ Available at [rubydoc.info](http://www.rubydoc.info/gems/dim/).
 
 # License
 
-Dim is available under the MIT license (see the file [LICENSE] for details).
+Dim is available under the MIT license (see the file LICENSE for details).
 
 [version-badge]: https://img.shields.io/gem/v/dim.svg
 [rubygems]: http://rubygems.org/gems/dim
