@@ -1,6 +1,5 @@
 # DIM: Dependency Injection - Minimal
 
-
 [![Gem Version][version-badge]][rubygems]
 [![Build Status][travis-badge]][travis]
 
@@ -88,9 +87,13 @@ inject ServerContainer itself into your objects like so:
 Jim wrote a [nice article](http://onestepback.org/index.cgi/Tech/Ruby/DependencyInjectionInRuby.rdoc) explaining
 the rationale for this code and how it works. Also check out [his slides](http://onestepback.org/articles/depinj/).
 
+## Documentation
+
+Available at [rubydoc.info](http://www.rubydoc.info/gems/dim/).
+
 # License
 
-Dim is available under the MIT license (see the file LICENSE for details).
+Dim is available under the MIT license (see the file [LICENSE] for details).
 
 [version-badge]: https://img.shields.io/gem/v/dim.svg
 [rubygems]: http://rubygems.org/gems/dim
