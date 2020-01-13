@@ -17,5 +17,5 @@ Gem::Specification.new do |s|
   s.test_files = `git ls-files spec`.split("\n")
   s.add_development_dependency "rspec", "~> 3"
   s.add_development_dependency "rake"
-  s.license = "MIT"
+  s.license = "CC-BY-SA-4.0"
 end
