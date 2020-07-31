@@ -92,6 +92,11 @@ the rationale for this code and how it works. Also check out [his slides](http:/
 
 Available at [rubydoc.info](http://www.rubydoc.info/gems/dim/).
 
+## Other Implementations
+
+* [mindi](https://github.com/vjoel/mindi)
+* [syringe](https://github.com/leandrosilva/syringe)
+
 # License
 
 Attribution-ShareAlike 4.0 International (CC BY-SA 4.0). See `LICENSE` for full text.
