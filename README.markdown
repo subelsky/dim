@@ -85,17 +85,15 @@ inject ServerContainer itself into your objects like so:
 
 ## More Background
 
-Jim wrote a [nice article](http://onestepback.org/index.cgi/Tech/Ruby/DependencyInjectionInRuby.rdoc) explaining
-the rationale for this code and how it works. Also check out [his slides](http://onestepback.org/articles/depinj/).
+Jim wrote a [nice article](https://web.archive.org/web/20050212084047/http://onestepback.org:80/index.cgi/Tech/Ruby/DependencyInjectionInRuby.rdoc) explaining
+the rationale for this code and how it works. At least two other implementations of the code have been created:
+
+* [mindi](https://github.com/vjoel/mindi)
+* [syringe](https://github.com/leandrosilva/syringe)
 
 ## Documentation
 
 Available at [rubydoc.info](http://www.rubydoc.info/gems/dim/).
-
-## Other Implementations
-
-* [mindi](https://github.com/vjoel/mindi)
-* [syringe](https://github.com/leandrosilva/syringe)
 
 # License
 
